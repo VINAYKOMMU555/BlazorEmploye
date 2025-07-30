@@ -1,0 +1,58 @@
+﻿@page "/employeePage1"
+@using BlazorEmployee.Data
+@inject IEmployeeService EmployeeService
+@inject NavigationManager Navigation
+
+
+
+<h3>Employee List</h3>
+<a href="/employee1/00000000-0000-0000-0000-000000000000" class="btn btn-primary mb-2">Add New Employee</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Job_titlle</th>
+            <th>Work Phone</th>
+            <th>Cell Phone</th>
+            <th>Department</th>
+            <th>Manager</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (employees != null)
+        {
+            foreach (var emp in employees)
+            {
+                <tr>
+                    <td>@emp.Name</td>
+                    <td>@emp.Job_title</td>
+                    <td>@emp.Work_phone</td>
+                    <td>@emp.Cell_phone</td>
+                    <td>@emp.Department</td>
+                    <td>@emp.Manager</td>
+                    <td>
+                        <a class="btn btn-sm btn-warning" href="/employee1/@emp.Id">Edit</a>
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteEmployee(emp.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<Employee> employees;
+
+    protected override async Task OnInitializedAsync()
+    {
+        employees = await EmployeeService.GetEmployesAsync();
+    }
+
+    private async Task DeleteEmployee(Guid id)
+    {
+        await EmployeeService.DeleteEmployeeAsync(id);
+        employees = await EmployeeService.GetEmployesAsync();
+    }
+}

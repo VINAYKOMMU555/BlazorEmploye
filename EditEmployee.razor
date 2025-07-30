@@ -1,0 +1,67 @@
+﻿@page "/employee1/{Id:guid}"
+@inject NavigationManager Navigation
+@using BlazorEmployee.Data
+@inject IEmployeeService EmployeeService
+
+
+<EditForm Model="employee" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Name:</label>
+        <InputText class="form-control" @bind-Value="employee.Name" />
+    </div>
+    <div class="mb-3">
+        <label>Job_title:</label>
+        <InputText class="form-control" @bind-Value="employee.Job_title" />
+    </div>
+    <div class="mb-3">
+        <label>Work Phone:</label>
+        <InputText class="form-control" @bind-Value="employee.Work_phone" />
+    </div>
+
+    <div class="mb-3">
+        <label>Cell Phone:</label>
+        <InputText class="form-control" @bind-Value="employee.Cell_phone" />
+    </div>
+    <div class="mb-3">
+        <label>Department:</label>
+        <InputText class="form-control" @bind-Value="employee.Department" />
+    </div>
+    <div class="mb-3">
+        <label>Manager:</label>
+        <InputText class="form-control" @bind-Value="employee.Manager" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+</EditForm>
+
+@code 
+{
+
+    [Parameter] public Guid Id { get; set; }
+    private Employee employee = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id != Guid.Empty)
+        {
+            var result = await EmployeeService.GetEmployeeAsync(Id);
+            if (result != null)
+                employee = result;
+
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (Id == Guid.Empty)
+            await EmployeeService.AddEmployeeAsync(employee);
+        else
+            await EmployeeService.UpdateEmployeeAsync(employee);
+
+        Navigation.NavigateTo("/employeePage1");
+    }
+      
+}
